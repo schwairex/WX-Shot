@@ -1,11 +1,14 @@
-# WX Shot
+# WX Shot 1.1.0
 
 WX Shot, açık tarayıcı sekmesinin görünür alanından seçim yapmanızı; seçimi çizim araçlarıyla düzenleyip panoya kopyalamanızı veya PNG olarak kaydetmenizi sağlayan, sunucusuz çalışan bir WebExtension projesidir.
 
 ## Özellikler
 
 - Fareyle serbest alan seçimi ve anlık boyut göstergesi
-- Kalem, vurgulayıcı, ok, dikdörtgen, metin ve silgi
+- Akıcı ve yumuşatılmış kalem; tabletlerde basınç desteği
+- Kalem, vurgulayıcı, çizgi, ok, dikdörtgen, elips, metin ve silgi
+- Şekiller için `Shift` ile kare/daire ve 45° açı sabitleme
+- Araç klavye kısayolları (`P`, `H`, `L`, `A`, `R`, `O`, `T`, `E`)
 - Renk ve çizgi kalınlığı seçimi
 - Geri al / yinele (`Ctrl/Cmd + Z`, `Ctrl/Cmd + Shift + Z`)
 - PNG olarak “Farklı kaydet” ve panoya kopyalama
@@ -20,6 +23,8 @@ WX Shot, açık tarayıcı sekmesinin görünür alanından seçim yapmanızı; 
 3. **Geliştirici modu** seçeneğini açın.
 4. **Paketlenmemiş öğe yükle** düğmesine basıp bu klasörü seçin.
 5. Araç çubuğundaki WX Shot düğmesine tıklayın veya `Alt + Shift + S` kullanın.
+
+Tarayıcı bazında ayrıntılı ve sorun giderme adımları için `KURULUM.md` dosyasına bakın.
 
 ## Kurulum — Firefox
 
@@ -37,6 +42,8 @@ Kalıcı Firefox dağıtımı için paket Mozilla Add-ons üzerinden imzalanmal�
 3. Alt araç çubuğundan çizim aracını seçin ve işaretlemelerinizi yapın.
 4. **Kopyala** veya **Farklı kaydet** seçeneğini kullanın.
 5. Herhangi bir aşamada `Esc` ile çıkabilirsiniz.
+
+Çizgi ve ok çizerken `Shift` tuşu açıyı 45 derecelik adımlara sabitler. Dikdörtgen ve elipste `Shift`, kare veya daire oluşturur.
 
 ## Tarayıcı güvenlik sınırları
 

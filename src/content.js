@@ -133,16 +133,19 @@
             <div class="canvas-stage">
               <canvas class="base" width="${width}" height="${height}"></canvas>
               <canvas class="draw" width="${width}" height="${height}"></canvas>
+              <canvas class="preview" width="${width}" height="${height}"></canvas>
             </div>
           </div>
           <footer>
             <div class="tools" role="toolbar" aria-label="Çizim araçları">
-              ${toolButton("pen", "Kalem", penIcon, true)}
-              ${toolButton("highlight", "Vurgula", highlightIcon)}
-              ${toolButton("arrow", "Ok", arrowIcon)}
-              ${toolButton("rect", "Dikdörtgen", rectIcon)}
-              ${toolButton("text", "Metin", textIcon)}
-              ${toolButton("eraser", "Silgi", eraserIcon)}
+              ${toolButton("pen", "Kalem (P)", penIcon, true)}
+              ${toolButton("highlight", "Vurgula (H)", highlightIcon)}
+              ${toolButton("line", "Çizgi (L) • Shift: 45°", lineIcon)}
+              ${toolButton("arrow", "Ok (A) • Shift: 45°", arrowIcon)}
+              ${toolButton("rect", "Dikdörtgen (R) • Shift: kare", rectIcon)}
+              ${toolButton("ellipse", "Elips (O) • Shift: daire", ellipseIcon)}
+              ${toolButton("text", "Metin (T)", textIcon)}
+              ${toolButton("eraser", "Silgi (E)", eraserIcon)}
               <span class="divider"></span>
               <div class="colors" aria-label="Renk seçimi">
                 ${palette.map((color, index) => `<button class="color ${index === 0 ? "active" : ""}" data-color="${color}" style="--color:${color}" aria-label="${color}"></button>`).join("")}
@@ -166,8 +169,10 @@
     const shell = root.querySelector(".editor-shell");
     const base = root.querySelector(".base");
     const draw = root.querySelector(".draw");
+    const preview = root.querySelector(".preview");
     const baseCtx = base.getContext("2d");
     const drawCtx = draw.getContext("2d");
+    const previewCtx = preview.getContext("2d");
     const stage = root.querySelector(".canvas-stage");
     const undoButton = root.querySelector(".undo");
     const redoButton = root.querySelector(".redo");
@@ -177,6 +182,8 @@
     let color = palette[0];
     let lineWidth = 5;
     let activeAction = null;
+    let animationFrame = 0;
+    const freehandTools = new Set(["pen", "highlight", "eraser"]);
 
     baseCtx.drawImage(
       image,
@@ -190,11 +197,32 @@
       height
     );
 
-    const render = () => {
-      drawCtx.clearRect(0, 0, width, height);
-      [...actions, ...(activeAction ? [activeAction] : [])].forEach((action) => drawAction(drawCtx, action));
+    const updateHistoryButtons = () => {
       undoButton.disabled = actions.length === 0;
       redoButton.disabled = redoStack.length === 0;
+    };
+
+    const renderCommitted = () => {
+      drawCtx.clearRect(0, 0, width, height);
+      actions.forEach((action) => drawAction(drawCtx, action));
+      updateHistoryButtons();
+    };
+
+    const paintActiveAction = () => {
+      animationFrame = 0;
+      if (!activeAction) return;
+
+      if (freehandTools.has(activeAction.tool)) {
+        drawFreehandIncrement(previewCtx, activeAction);
+        return;
+      }
+
+      previewCtx.clearRect(0, 0, width, height);
+      drawAction(previewCtx, activeAction);
+    };
+
+    const scheduleActivePaint = () => {
+      if (!animationFrame) animationFrame = requestAnimationFrame(paintActiveAction);
     };
 
     root.querySelectorAll("[data-tool]").forEach((button) => {
@@ -202,7 +230,7 @@
         root.querySelectorAll("[data-tool]").forEach((item) => item.classList.remove("active"));
         button.classList.add("active");
         tool = button.dataset.tool;
-        draw.dataset.cursor = tool;
+        preview.dataset.cursor = tool;
       });
     });
 
@@ -218,15 +246,17 @@
       lineWidth = Number(event.target.value);
     });
 
-    draw.addEventListener("pointerdown", (event) => {
+    preview.addEventListener("pointerdown", (event) => {
       if (event.button !== 0) return;
-      const point = canvasPoint(event, draw);
+      event.preventDefault();
+      const point = canvasPoint(event, preview);
+      point.pressure = normalizedPressure(event);
       if (tool === "text") {
-        showTextInput(stage, draw, point, color, lineWidth, (text) => {
+        showTextInput(stage, preview, point, color, lineWidth, (text) => {
           if (text.trim()) {
             actions.push({ tool: "text", color, width: lineWidth, start: point, text: text.trim() });
             redoStack.length = 0;
-            render();
+            renderCommitted();
           }
         });
         return;
@@ -237,38 +267,67 @@
         width: lineWidth,
         start: point,
         end: point,
-        points: [point]
+        points: [point],
+        pointerType: event.pointerType,
+        renderedIndex: 0
       };
-      draw.setPointerCapture(event.pointerId);
+      if (tool === "eraser") {
+        previewCtx.clearRect(0, 0, width, height);
+        previewCtx.drawImage(draw, 0, 0);
+        draw.style.visibility = "hidden";
+      } else {
+        previewCtx.clearRect(0, 0, width, height);
+      }
+      preview.setPointerCapture(event.pointerId);
+      scheduleActivePaint();
     });
 
-    draw.addEventListener("pointermove", (event) => {
+    preview.addEventListener("pointermove", (event) => {
       if (!activeAction) return;
-      const point = canvasPoint(event, draw);
-      activeAction.end = point;
-      if (["pen", "highlight", "eraser"].includes(activeAction.tool)) activeAction.points.push(point);
-      render();
+      event.preventDefault();
+      const samples = typeof event.getCoalescedEvents === "function" ? event.getCoalescedEvents() : [event];
+      for (const sample of samples) {
+        const point = canvasPoint(sample, preview);
+        point.pressure = normalizedPressure(sample);
+        const last = activeAction.points.at(-1);
+        if (!last || distance(last, point) >= 0.35) activeAction.points.push(point);
+      }
+      const rawEnd = activeAction.points.at(-1) ?? canvasPoint(event, preview);
+      activeAction.end = event.shiftKey ? constrainedEnd(activeAction.start, rawEnd, activeAction.tool) : rawEnd;
+      scheduleActivePaint();
     });
 
-    const finishAction = () => {
+    const finishAction = (event) => {
       if (!activeAction) return;
-      actions.push(activeAction);
+      if (animationFrame) {
+        cancelAnimationFrame(animationFrame);
+        animationFrame = 0;
+      }
+      paintActiveAction();
+      const completedAction = { ...activeAction };
+      delete completedAction.renderedIndex;
+      actions.push(completedAction);
       activeAction = null;
       redoStack.length = 0;
-      render();
+      draw.style.visibility = "visible";
+      previewCtx.clearRect(0, 0, width, height);
+      renderCommitted();
+      if (event?.pointerId != null && preview.hasPointerCapture(event.pointerId)) {
+        preview.releasePointerCapture(event.pointerId);
+      }
     };
-    draw.addEventListener("pointerup", finishAction);
-    draw.addEventListener("pointercancel", finishAction);
+    preview.addEventListener("pointerup", finishAction);
+    preview.addEventListener("pointercancel", finishAction);
 
     undoButton.addEventListener("click", () => {
       const action = actions.pop();
       if (action) redoStack.push(action);
-      render();
+      renderCommitted();
     });
     redoButton.addEventListener("click", () => {
       const action = redoStack.pop();
       if (action) actions.push(action);
-      render();
+      renderCommitted();
     });
 
     root.querySelector(".close").addEventListener("click", cleanup);
@@ -278,6 +337,11 @@
       if (modifier && event.key.toLowerCase() === "z") {
         event.preventDefault();
         (event.shiftKey ? redoButton : undoButton).click();
+      }
+      if (!modifier && !event.altKey && !event.target.matches("input")) {
+        const shortcuts = { p: "pen", h: "highlight", l: "line", a: "arrow", r: "rect", o: "ellipse", t: "text", e: "eraser" };
+        const shortcutTool = shortcuts[event.key.toLowerCase()];
+        if (shortcutTool) root.querySelector(`[data-tool="${shortcutTool}"]`)?.click();
       }
     });
 
@@ -307,32 +371,19 @@
     });
 
     shell.focus();
-    draw.dataset.cursor = "pen";
+    preview.dataset.cursor = "pen";
   }
 
   function drawAction(ctx, action) {
     ctx.save();
-    ctx.lineCap = "round";
-    ctx.lineJoin = "round";
-    ctx.strokeStyle = action.color;
-    ctx.fillStyle = action.color;
-    ctx.lineWidth = action.width;
-
-    if (action.tool === "eraser") {
-      ctx.globalCompositeOperation = "destination-out";
-      ctx.lineWidth = action.width * 2.4;
-    }
-    if (action.tool === "highlight") {
-      ctx.globalAlpha = 0.34;
-      ctx.lineWidth = action.width * 3;
-    }
+    applyActionStyle(ctx, action);
 
     if (["pen", "highlight", "eraser"].includes(action.tool)) {
+      drawSmoothStroke(ctx, action);
+    } else if (action.tool === "line") {
       ctx.beginPath();
-      action.points.forEach((point, index) => {
-        if (index === 0) ctx.moveTo(point.x, point.y);
-        else ctx.lineTo(point.x, point.y);
-      });
+      ctx.moveTo(action.start.x, action.start.y);
+      ctx.lineTo(action.end.x, action.end.y);
       ctx.stroke();
     } else if (action.tool === "rect") {
       ctx.strokeRect(
@@ -341,6 +392,14 @@
         action.end.x - action.start.x,
         action.end.y - action.start.y
       );
+    } else if (action.tool === "ellipse") {
+      const centerX = (action.start.x + action.end.x) / 2;
+      const centerY = (action.start.y + action.end.y) / 2;
+      const radiusX = Math.abs(action.end.x - action.start.x) / 2;
+      const radiusY = Math.abs(action.end.y - action.start.y) / 2;
+      ctx.beginPath();
+      ctx.ellipse(centerX, centerY, Math.max(radiusX, 0.5), Math.max(radiusY, 0.5), 0, 0, Math.PI * 2);
+      ctx.stroke();
     } else if (action.tool === "arrow") {
       drawArrow(ctx, action.start, action.end, action.width);
     } else if (action.tool === "text") {
@@ -352,6 +411,119 @@
       ctx.fillText(action.text, action.start.x, action.start.y);
     }
     ctx.restore();
+  }
+
+  function applyActionStyle(ctx, action) {
+    ctx.lineCap = "round";
+    ctx.lineJoin = "round";
+    ctx.strokeStyle = action.color;
+    ctx.fillStyle = action.color;
+    ctx.lineWidth = action.width;
+    if (action.tool === "eraser") {
+      ctx.globalCompositeOperation = "destination-out";
+      ctx.lineWidth = action.width * 2.4;
+    } else if (action.tool === "highlight") {
+      ctx.globalAlpha = 0.34;
+      ctx.lineWidth = action.width * 3;
+    }
+  }
+
+  function drawSmoothStroke(ctx, action) {
+    const points = action.points ?? [];
+    if (points.length === 0) return;
+    if (points.length === 1) {
+      const pressure = action.pointerType === "pen" ? 0.72 + points[0].pressure * 0.7 : 1;
+      ctx.beginPath();
+      ctx.arc(points[0].x, points[0].y, (ctx.lineWidth * pressure) / 2, 0, Math.PI * 2);
+      ctx.fill();
+      return;
+    }
+
+    if (action.tool === "pen" && action.pointerType === "pen") {
+      for (let index = 1; index < points.length; index += 1) {
+        const previousPrevious = points[Math.max(0, index - 2)];
+        const previous = points[index - 1];
+        const current = points[index];
+        const start = index === 1 ? previous : midpoint(previousPrevious, previous);
+        const end = index === points.length - 1 ? current : midpoint(previous, current);
+        ctx.lineWidth = action.width * (0.72 + ((previous.pressure + current.pressure) / 2) * 0.7);
+        ctx.beginPath();
+        ctx.moveTo(start.x, start.y);
+        ctx.quadraticCurveTo(previous.x, previous.y, end.x, end.y);
+        ctx.stroke();
+      }
+      return;
+    }
+
+    ctx.beginPath();
+    ctx.moveTo(points[0].x, points[0].y);
+    for (let index = 1; index < points.length - 1; index += 1) {
+      const middle = midpoint(points[index], points[index + 1]);
+      ctx.quadraticCurveTo(points[index].x, points[index].y, middle.x, middle.y);
+    }
+    const last = points.at(-1);
+    ctx.lineTo(last.x, last.y);
+    ctx.stroke();
+  }
+
+  function drawFreehandIncrement(ctx, action) {
+    const points = action.points;
+    if (!points.length) return;
+    const startIndex = Math.max(1, action.renderedIndex || 1);
+    ctx.save();
+    applyActionStyle(ctx, action);
+
+    if (!action.renderedIndex) {
+      const pressure = action.pointerType === "pen" ? 0.72 + points[0].pressure * 0.7 : 1;
+      ctx.beginPath();
+      ctx.arc(points[0].x, points[0].y, (ctx.lineWidth * pressure) / 2, 0, Math.PI * 2);
+      ctx.fill();
+    }
+
+    for (let index = startIndex; index < points.length; index += 1) {
+      const previous = points[index - 1];
+      const current = points[index];
+      if (action.tool === "pen" && action.pointerType === "pen") {
+        ctx.lineWidth = action.width * (0.72 + ((previous.pressure + current.pressure) / 2) * 0.7);
+      }
+      ctx.beginPath();
+      ctx.moveTo(previous.x, previous.y);
+      ctx.lineTo(current.x, current.y);
+      ctx.stroke();
+    }
+    action.renderedIndex = points.length;
+    ctx.restore();
+  }
+
+  function midpoint(a, b) {
+    return { x: (a.x + b.x) / 2, y: (a.y + b.y) / 2 };
+  }
+
+  function normalizedPressure(event) {
+    if (event.pointerType !== "pen") return 0.5;
+    return Math.max(0.05, Math.min(1, event.pressure || 0.5));
+  }
+
+  function distance(a, b) {
+    return Math.hypot(b.x - a.x, b.y - a.y);
+  }
+
+  function constrainedEnd(start, end, tool) {
+    const deltaX = end.x - start.x;
+    const deltaY = end.y - start.y;
+    if (["rect", "ellipse"].includes(tool)) {
+      const size = Math.max(Math.abs(deltaX), Math.abs(deltaY));
+      return {
+        x: start.x + Math.sign(deltaX || 1) * size,
+        y: start.y + Math.sign(deltaY || 1) * size
+      };
+    }
+    if (["line", "arrow"].includes(tool)) {
+      const radius = Math.hypot(deltaX, deltaY);
+      const angle = Math.round(Math.atan2(deltaY, deltaX) / (Math.PI / 4)) * (Math.PI / 4);
+      return { x: start.x + Math.cos(angle) * radius, y: start.y + Math.sin(angle) * radius };
+    }
+    return end;
   }
 
   function drawArrow(ctx, start, end, width) {
@@ -457,8 +629,10 @@
   const icon = (body) => `<svg viewBox="0 0 24 24" aria-hidden="true">${body}</svg>`;
   const penIcon = icon('<path d="m4 20 4.2-1 10.6-10.6a2.1 2.1 0 0 0-3-3L5.2 16 4 20Z"/><path d="m14.5 6.5 3 3"/>');
   const highlightIcon = icon('<path d="m6 15 3 3 10-10-3-3L6 15Z"/><path d="m4 20 6-1-5-5-1 6Z"/><path d="M13 20h7"/>');
+  const lineIcon = icon('<path d="M5 19 19 5"/>');
   const arrowIcon = icon('<path d="M5 19 19 5M10 5h9v9"/>');
   const rectIcon = icon('<rect x="4" y="5" width="16" height="14" rx="1"/>');
+  const ellipseIcon = icon('<ellipse cx="12" cy="12" rx="8" ry="6.5"/>');
   const textIcon = icon('<path d="M5 6V4h14v2M12 4v16M8 20h8"/>');
   const eraserIcon = icon('<path d="m5 15 7-9a2 2 0 0 1 3-.2l3.2 2.8a2 2 0 0 1 .2 2.8L11 20H7l-2-2a2 2 0 0 1 0-3Z"/><path d="m9 11 6 5"/>');
   const undoIcon = icon('<path d="m9 8-5 4 5 4"/><path d="M5 12h8a6 6 0 0 1 6 6"/>');
@@ -492,7 +666,7 @@
     .workspace { min-height:0; display:grid; place-items:center; overflow:auto; padding:28px; background-color:#0b0e14; background-image:linear-gradient(45deg,#121620 25%,transparent 25%),linear-gradient(-45deg,#121620 25%,transparent 25%),linear-gradient(45deg,transparent 75%,#121620 75%),linear-gradient(-45deg,transparent 75%,#121620 75%); background-size:20px 20px;background-position:0 0,0 10px,10px -10px,-10px 0; }
     .canvas-stage { position:relative; max-width:100%; max-height:100%; line-height:0; box-shadow:0 18px 52px rgba(0,0,0,.48); }
     canvas { display:block; max-width:100%; max-height:calc(100vh - 220px); width:auto; height:auto; }
-    .draw { position:absolute; inset:0; touch-action:none; }.draw[data-cursor="text"]{cursor:text}.draw[data-cursor="eraser"]{cursor:cell}.draw:not([data-cursor="text"]):not([data-cursor="eraser"]){cursor:crosshair}
+    .draw,.preview { position:absolute; inset:0; }.draw{pointer-events:none}.preview{touch-action:none}.preview[data-cursor="text"]{cursor:text}.preview[data-cursor="eraser"]{cursor:cell}.preview:not([data-cursor="text"]):not([data-cursor="eraser"]){cursor:crosshair}
     .text-entry { position:absolute; z-index:3; min-width:150px; width:220px; padding:7px 9px; border:1px solid #7c73ff; border-radius:8px; outline:none; color:#fff; background:rgba(15,23,42,.92); line-height:1.2; box-shadow:0 9px 30px rgba(0,0,0,.3); transform:translateY(-3px); }
     footer { display:flex; align-items:center; gap:18px; padding:0 16px; border-top:1px solid #252a35; background:#151922; }
     .tools,.actions,.colors { display:flex; align-items:center; gap:5px; }.actions{margin-left:auto;gap:9px}.divider{width:1px;height:27px;margin:0 5px;background:#303644}

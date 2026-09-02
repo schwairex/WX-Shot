@@ -3,7 +3,12 @@
 const api = globalThis.browser ?? globalThis.chrome;
 
 async function capture(tab) {
-  if (!tab?.id || !tab.windowId) return;
+  if (tab?.id == null || tab?.windowId == null) return;
+
+  if (!isSupportedPage(tab.url)) {
+    await showTemporaryBadge(tab.id, "×");
+    return;
+  }
 
   try {
     const dataUrl = await api.tabs.captureVisibleTab(tab.windowId, { format: "png" });
@@ -12,9 +17,15 @@ async function capture(tab) {
       dataUrl
     });
   } catch (error) {
-    console.warn("WX Shot capture failed:", error);
+    // The page can disappear between capture and delivery. Keep this expected
+    // navigation race out of Chromium's extension error panel.
+    console.debug("WX Shot capture was skipped:", error?.message ?? error);
     await showTemporaryBadge(tab.id, "!");
   }
+}
+
+function isSupportedPage(url = "") {
+  return !/^(brave|chrome|edge|about|view-source|chrome-extension|moz-extension):/i.test(url);
 }
 
 async function captureActiveTab() {
