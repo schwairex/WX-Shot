@@ -1,0 +1,9 @@
+{
+  "extName": { "message": "WX Shot" },
+  "extDescription": { "message": "Capture an area or full page, annotate, redact, and export it." },
+  "actionTitle": { "message": "Capture with WX Shot" },
+  "captureAreaCommand": { "message": "Select an area from the visible tab" },
+  "captureFullCommand": { "message": "Capture the full page" },
+  "contextArea": { "message": "WX Shot: Select area" },
+  "contextFull": { "message": "WX Shot: Capture full page" }
+}

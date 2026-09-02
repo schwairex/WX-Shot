@@ -1,22 +1,21 @@
 <div align="center">
   <img src="assets/icon-128.png" width="112" height="112" alt="WX Shot logosu">
   <h1>WX Shot</h1>
-  <p><strong>Seç. İşaretle. Paylaş.</strong></p>
-  <p>Hızlı, modern ve gizlilik odaklı tarayıcı ekran görüntüsü aracı.</p>
+  <p><strong>Seç. Gizle. İşaretle. Paylaş.</strong></p>
+  <p>Modern, hızlı ve gizlilik odaklı tarayıcı ekran görüntüsü aracı.</p>
 
   <p>
-    <img src="https://img.shields.io/badge/version-1.2.0-6D5FE8?style=for-the-badge" alt="Sürüm 1.2.0">
+    <img src="https://img.shields.io/badge/version-1.3.0-6D5FE8?style=for-the-badge" alt="Sürüm 1.3.0">
     <img src="https://img.shields.io/badge/Manifest-V3-4285F4?style=for-the-badge&logo=googlechrome&logoColor=white" alt="Manifest V3">
     <img src="https://img.shields.io/badge/paket-Universal-10B981?style=for-the-badge" alt="Tek universal paket">
     <img src="https://img.shields.io/badge/lisans-MIT-F59E0B?style=for-the-badge" alt="MIT lisansı">
   </p>
 
   <p>
-    <img src="https://img.shields.io/badge/Brave-destekleniyor-FB542B?style=flat-square&logo=brave&logoColor=white" alt="Brave desteği">
+    <img src="https://img.shields.io/badge/Brave-test%20edildi-FB542B?style=flat-square&logo=brave&logoColor=white" alt="Brave test edildi">
     <img src="https://img.shields.io/badge/Chrome-destekleniyor-4285F4?style=flat-square&logo=googlechrome&logoColor=white" alt="Chrome desteği">
     <img src="https://img.shields.io/badge/Edge-destekleniyor-0078D7?style=flat-square&logo=microsoftedge&logoColor=white" alt="Edge desteği">
     <img src="https://img.shields.io/badge/Firefox-destekleniyor-FF7139?style=flat-square&logo=firefoxbrowser&logoColor=white" alt="Firefox desteği">
-    <img src="https://img.shields.io/badge/Safari-paketlenebilir-006CFF?style=flat-square&logo=safari&logoColor=white" alt="Safari desteği">
   </p>
 </div>
 
@@ -24,87 +23,76 @@
 
 ## WX Shot nedir?
 
-WX Shot, açık tarayıcı sekmesinin görünür bölümünden istediğiniz alanı seçmenizi, seçimi kaydetmeden önce düzenlemenizi ve sonucu panoya ya da PNG dosyasına aktarmanızı sağlayan bir WebExtension'dır.
+WX Shot; sekmenin görünen alanından seçim yapabilen veya kaydırılabilir sayfanın tamamını yakalayabilen, sonucu tarayıcıdan ayrılmadan düzenleyip dışa aktarabilen bir WebExtension'dır. Görüntüler bir sunucuya yüklenmez; yakalama, birleştirme, çizim, hassas bilgi gizleme ve dışa aktarma işlemleri cihazda yapılır.
 
-Görüntüler bir sunucuya yüklenmez. Yakalama, kırpma, çizim ve dışa aktarma işlemlerinin tamamı tarayıcınızda yerel olarak gerçekleştirilir.
+## v1.3.0 yenilikleri
 
-## Öne çıkan özellikler
+| # | Özellik | Açıklama |
+|---:|---|---|
+| 1 | Tam sayfa yakalama | Uzun sayfayı kareler halinde yakalar, sabit öğeleri tekrar etmeden tek görüntüde birleştirir |
+| 2 | Bulanıklaştırma ve pikselleştirme | Seçilen dikdörtgen alanı geri alınabilir bir efekt katmanında gizler |
+| 4 | Yakınlaştırma ve kaydırma | `%25–%400` aralığında yakınlaştırma; `Ctrl/Cmd + tekerlek`, orta tuş veya `Space + sürükle` desteği |
+| 7 | Gelişmiş şekil stilleri | Dolgu, saydamlık, kesik çizgi, gölge; klasik, çift ve nokta ok ucu |
+| 10 | Çoklu dışa aktarma | PNG, JPEG ve WebP; `%100`, `%75` veya `%50` çıktı ölçeği; JPEG/WebP kalite ayarı |
+| 12 | Yerel son çekimler | Son altı dışa aktarmanın sıkıştırılmış önizlemesini yalnızca tarayıcı depolamasında tutar |
+| 13 | Sağ tık menüsü | “Alan seç” ve “Tam sayfayı yakala” komutlarını sayfa menüsüne ekler |
+| 14 | Akıllı gizleme | Sayfadaki e-posta, telefon ve kart numarası benzeri metinleri yerel olarak bulup pikselleştirir |
+| 15 | Erişilebilirlik ve dil | Türkçe/İngilizce arayüz, klavye odağı, ARIA etiketleri, yüksek kontrast ve azaltılmış hareket desteği |
 
-| Alan | Özellikler |
-|---|---|
-| Yakalama | Görünür sekmeden fareyle serbest alan seçimi, anlık piksel ölçüsü, yüksek DPI desteği |
-| Çizim | Yumuşatılmış kalem, vurgulayıcı, düz çizgi, ok, dikdörtgen ve elips |
-| Giriş | Fare, dokunma ve grafik tablet; desteklenen kalemlerde basınç hassasiyeti |
-| Düzenleme | Metin, silgi, renk paleti, çizgi kalınlığı, geri al ve yinele |
-| Hassasiyet | `Shift` ile 45° çizgi/ok, kare ve daire sabitleme |
-| Dışa aktarma | PNG olarak farklı kaydetme veya doğrudan panoya kopyalama |
-| Gizlilik | Sunucusuz çalışma; telemetri, hesap, reklam ve takip kodu yok |
-| Uyumluluk | Tek paketle Brave, Chrome, Edge, Opera, Vivaldi ve Firefox |
+## Tüm özellikler
+
+- Fareyle serbest alan seçimi ve anlık piksel ölçüsü
+- Kaydırılabilir uzun sayfaların tek görüntü halinde yakalanması
+- Yumuşatılmış, gecikmesi azaltılmış ve kalem basıncına duyarlı çizim
+- Kalem, vurgulayıcı, çizgi, ok, dikdörtgen, elips, metin ve silgi
+- Bulanıklaştırma, pikselleştirme ve akıllı hassas bilgi gizleme
+- Renk, kalınlık, saydamlık, dolgu, kesik çizgi, gölge ve ok ucu ayarları
+- Geri al/yinele; eylem tabanlı ve tahribatsız düzenleme
+- Yakınlaştırma, sığdırma ve çalışma alanını kaydırma
+- PNG/JPEG/WebP ve üç çıktı ölçeği
+- Panoya PNG kopyalama ve işletim sisteminin **Farklı kaydet** penceresi
+- Son altı çıktının yerel geçmişi
+- Eklenti düğmesi, klavye kısayolu, `PrtSc` ve sağ tık menüsü
+- Türkçe ve İngilizce yerelleştirme
+- Tek ZIP, tek kaynak ağacı ve tek `manifest.json`
 
 ## Akıcı çizim motoru
 
-WX Shot 1.2.0 çizim motoru, büyük ve yüksek çözünürlüklü görüntülerde gecikmeyi azaltmak üzere tasarlanmıştır:
-
-- Canlı kalem hareketleri ayrı bir GPU dostu önizleme katmanında işlenir.
-- İşaretçi olayları ekran yenileme hızına göre gruplanır.
-- Tarayıcının yüksek frekanslı birleştirilmiş giriş noktaları kullanılır.
-- Çizgi noktaları bitişte sadeleştirilip yumuşak eğrilere dönüştürülür.
-- Normal çizimlerde geçmiş eylemler her hareket veya kalem bırakmada yeniden oluşturulmaz.
-- Çok büyük ekran görüntülerinde düzenleme katmanı otomatik optimize edilir; dışa aktarım orijinal görüntü boyutunda yapılır.
-- Silgi, çalışma katmanının hızlı bir kopyası üzerinde canlı çalışır ve sonuç tek işlemde birleştirilir.
-
-## Desteklenen tarayıcılar
-
-![Chrome 121+](https://img.shields.io/badge/Chrome-121%2B-4285F4?style=flat-square&logo=googlechrome&logoColor=white)
-![Firefox 121+](https://img.shields.io/badge/Firefox-121%2B-FF7139?style=flat-square&logo=firefoxbrowser&logoColor=white)
-
-| Tarayıcı | Durum | Kurulum yöntemi |
-|---|---|---|
-| Brave | Test edildi | Universal klasörü paketlenmemiş eklenti olarak yüklenir |
-| Google Chrome | Destekleniyor | Universal klasörü paketlenmemiş eklenti olarak yüklenir |
-| Microsoft Edge | Destekleniyor | Universal klasörü paketlenmemiş eklenti olarak yüklenir |
-| Opera / Opera GX | Destekleniyor | Universal klasörü paketlenmemiş eklenti olarak yüklenir |
-| Vivaldi | Destekleniyor | Universal klasörü paketlenmemiş eklenti olarak yüklenir |
-| Firefox | Destekleniyor | Aynı klasördeki `manifest.json` geçici eklenti olarak seçilir |
-| Safari | Dönüştürülebilir | Aynı klasör Safari Web Extension paketleyicisiyle paketlenir |
-
-> Tek ZIP ve tek `manifest.json` kullanılır. Ayrı Chrome veya Firefox paketi yoktur.
+WX Shot 1.3.0, çizim sırasında görülen takılmayı azaltmak için üç ayrı düzenleme katmanı kullanır: efekt, kalıcı çizim ve canlı önizleme. İşaretçi hareketleri ekran yenileme hızında gruplanır; tarayıcının birleştirilmiş giriş noktaları değerlendirilir ve çizgi noktaları işlem sonunda sadeleştirilir. Kalem ve silgi, her harekette bütün geçmişi yeniden çizmez. Büyük görüntülerde düzenleme katmanı otomatik olarak en fazla 3200 px kenar/8 MP çalışma yüzeyine uyarlanır; dışa aktarım ana görselin seçilen çözünürlüğünde oluşturulur.
 
 ## Kurulum
 
 ### Paketi hazırlayın
 
-1. `WX-Shot-Universal-v1.2.0.zip` dosyasını indirin.
+1. `WX-Shot-Universal-v1.3.0.zip` dosyasını indirin.
 2. ZIP'e sağ tıklayıp **Tümünü ayıkla** seçeneğini kullanın.
-3. Çıkan klasörde doğrudan `manifest.json`, `src` ve `assets` bulunduğunu kontrol edin.
+3. Seçilecek klasörde doğrudan `manifest.json`, `src`, `assets` ve `_locales` bulunduğunu doğrulayın.
 
-> ZIP dosyasını doğrudan **Paketlenmemiş öğe yükle** penceresinde seçmeyin. Önce klasöre çıkarılmalıdır.
+> ZIP dosyasını doğrudan paketlenmemiş eklenti olarak seçmeyin; önce klasöre çıkarın.
 
 ### Brave
 
 1. `brave://extensions/` adresini açın.
-2. Sağ üstten **Geliştirici modu** seçeneğini etkinleştirin.
+2. Sağ üstten **Geliştirici modu** seçeneğini açın.
 3. **Paketlenmemiş öğe yükle** düğmesine basın.
-4. İçinde `manifest.json` bulunan WX Shot klasörünü seçin.
-5. Eklentiyi araç çubuğuna sabitleyin ve normal bir web sayfasında deneyin.
+4. İçinde `manifest.json` bulunan klasörü seçin.
+5. Normal bir web sayfasını yenileyip WX Shot'u araç çubuğuna sabitleyin.
 
 ### Google Chrome
 
 1. `chrome://extensions/` adresini açın.
 2. **Geliştirici modu** seçeneğini açın.
-3. **Paketlenmemiş öğe yükle** ile WX Shot klasörünü seçin.
+3. **Paketlenmemiş öğe yükle** ile aynı Universal klasörü seçin.
 
 ### Microsoft Edge
 
 1. `edge://extensions/` adresini açın.
 2. **Geliştirici modu** seçeneğini açın.
-3. **Paketlenmemiş öğe yükle** ile WX Shot klasörünü seçin.
+3. **Paketlenmemiş öğe yükle** ile aynı Universal klasörü seçin.
 
 ### Opera, Opera GX ve Vivaldi
 
-1. Opera için `opera://extensions/`, Vivaldi için `vivaldi://extensions/` adresini açın.
-2. **Geliştirici modu** seçeneğini açın.
-3. Aynı WX Shot klasörünü paketlenmemiş eklenti olarak yükleyin.
+Opera'da `opera://extensions/`, Vivaldi'de `vivaldi://extensions/` sayfasını açın; geliştirici modunu etkinleştirip aynı klasörü paketlenmemiş eklenti olarak yükleyin.
 
 ### Firefox
 
@@ -112,43 +100,57 @@ WX Shot 1.2.0 çizim motoru, büyük ve yüksek çözünürlüklü görüntüler
 2. **Geçici Eklenti Yükle** düğmesine basın.
 3. Universal klasördeki `manifest.json` dosyasını seçin.
 
-Firefox yeniden başlatıldığında geçici kurulum kaldırılır. Kalıcı dağıtım için eklentinin Mozilla Add-ons üzerinden imzalanması gerekir.
+Geçici kurulum Firefox yeniden başlatılınca kaldırılır. Kalıcı dağıtım için Mozilla Add-ons imzası gerekir.
 
 ### Safari
 
-Safari, WebExtension klasörünü bir uygulama eklentisi olarak paketler. macOS üzerinde:
+Safari dağıtımı macOS ve Xcode ile bir uygulama eklentisine dönüştürülmelidir:
 
 ```sh
 xcrun safari-web-extension-packager /WX-Shot-Universal-klasoru
 ```
 
-Oluşturulan Xcode projesi Apple geliştirici kimliğiyle imzalanır. App Store dağıtımı için Apple Developer Program üyeliği gerekir.
+Oluşan Xcode projesi Apple geliştirici kimliğiyle imzalanır. Safari'nin kısayol ve bağlam menüsü davranışları sürüme göre ayrıca doğrulanmalıdır.
 
 ## Kullanım
 
-1. Yakalamak istediğiniz normal web sayfasını açın.
-2. Araç çubuğundaki WX Shot düğmesine basın veya `Alt + Shift + S` kullanın.
-3. Fareyle yakalamak istediğiniz alanı sürükleyerek seçin.
-4. Düzenleyicide bir araç, renk ve çizgi kalınlığı belirleyin.
-5. Görseli işaretleyin.
-6. **Kopyala** ile panoya aktarın veya **Farklı kaydet** ile PNG olarak kaydedin.
+### Alan yakalama
 
-Herhangi bir aşamada `Esc` ile çıkabilirsiniz.
+1. Eklenti düğmesine basın, `Alt + Shift + S` kullanın veya sayfaya sağ tıklayıp **WX Shot: Alan seç** deyin.
+2. Fareyle istediğiniz alanı sürükleyin.
+3. Araçlarla düzenleyin.
+4. **Kopyala** veya **Farklı kaydet** seçeneğini kullanın.
+
+### Tam sayfa yakalama
+
+`Alt + Shift + F` kullanın veya sayfaya sağ tıklayıp **WX Shot: Tam sayfayı yakala** deyin. WX Shot, tarayıcının yakalama kotasına uymak için uzun sayfayı kontrollü aralıklarla kaydırır ve sonunda editörü açar. İşlem sırasında sekmeyi değiştirmeyin veya sayfayı kaydırmayın.
+
+### Akıllı gizleme
+
+Editörde **Akıllı gizle** düğmesine basın. WX Shot, yakalama öncesinde sayfa metninden algıladığı e-posta, telefon ve kart numarası benzeri alanları pikselleştirir. Tarayıcı yerel `TextDetector` özelliği sağlıyorsa görüntü tabanlı metin algılaması da denenir. Desteklenmeyen tarayıcılarda görselin içine gömülü yazılar otomatik bulunamayabilir; bu alanlarda manuel **Pikselleştir** veya **Bulanıklaştır** aracını kullanın.
 
 ## Araçlar ve kısayollar
 
-| Araç | Tuş | Açıklama |
+| İşlem | Kısayol | Açıklama |
 |---|---:|---|
-| Kalem | `P` | Yumuşatılmış serbest çizim; tabletlerde basınç destekli |
+| Alan yakala | `Alt + Shift + S` | Görünen sekmeden alan seçimi başlatır |
+| Tam sayfa yakala | `Alt + Shift + F` | Kaydırılabilir sayfanın tamamını yakalar |
+| Kalem | `P` | Yumuşatılmış serbest çizim |
 | Vurgulayıcı | `H` | Yarı saydam geniş işaretleme |
-| Çizgi | `L` | Düz çizgi; `Shift` ile 45° açı sabitleme |
-| Ok | `A` | Açıklama oku; `Shift` ile 45° açı sabitleme |
-| Dikdörtgen | `R` | Çerçeve; `Shift` ile kare |
-| Elips | `O` | Oval çerçeve; `Shift` ile daire |
-| Metin | `T` | Görüntü üzerine yazı ekleme |
-| Silgi | `E` | Eklenen çizim ve işaretleri silme |
-| Geri al | `Ctrl/Cmd + Z` | Son düzenlemeyi geri alır |
-| Yinele | `Ctrl/Cmd + Shift + Z` | Geri alınan düzenlemeyi yeniden uygular |
+| Çizgi | `L` | `Shift` ile 45° açı sabitleme |
+| Ok | `A` | `Shift` ile 45° açı sabitleme |
+| Dikdörtgen | `R` | `Shift` ile kare |
+| Elips | `O` | `Shift` ile daire |
+| Bulanıklaştır | `B` | Dikdörtgen alana bulanıklık uygular |
+| Pikselleştir | `X` | Dikdörtgen alanı mozaikler |
+| Metin | `T` | Görüntüye yazı ekler |
+| Silgi | `E` | Eklenen çizim ve metinleri siler |
+| Geri al/yinele | `Ctrl/Cmd + Z` / `Ctrl/Cmd + Shift + Z` | Son eylemi yönetir |
+| Yakınlaştır | `Ctrl/Cmd + tekerlek` | Çalışma alanını yakınlaştırır/uzaklaştırır |
+| Kaydır | `Space + sürükle` veya orta tuş | Yakınlaştırılmış görselde gezinir |
+| Çıkış | `Esc` | Seçimi veya editörü kapatır |
+
+`PrtSc`, web sayfası odaktayken alan yakalamayı başlatmayı dener. İşletim sistemi ekran alıntısı uygulaması bu tuşu önce yakalayabildiği için eklenti kısayolu daha güvenilirdir.
 
 ## İzinler ve gizlilik
 
@@ -156,49 +158,54 @@ Herhangi bir aşamada `Esc` ile çıkabilirsiniz.
 ![Telemetri yok](https://img.shields.io/badge/telemetri-yok-10B981?style=flat-square)
 ![Takip yok](https://img.shields.io/badge/takip-yok-10B981?style=flat-square)
 
-| İzin | Kullanım amacı |
+| İzin | Neden gerekli? |
 |---|---|
-| `activeTab` | Kullanıcının başlattığı işlemde etkin sekmeyi yakalamak |
-| `clipboardWrite` | Düzenlenen PNG görselini panoya kopyalamak |
-| `downloads` | Görseli kullanıcının seçtiği konuma kaydetmek |
-| `<all_urls>` | Normal web sayfalarında `PrtSc` olayını ve seçim arayüzünü çalıştırmak |
+| `activeTab` | Kullanıcının başlattığı yakalamada etkin sekmeye erişmek |
+| `clipboardWrite` | Sonucu PNG olarak panoya yazmak |
+| `contextMenus` | Alan ve tam sayfa komutlarını sağ tık menüsüne eklemek |
+| `downloads` | Dosyayı kullanıcının seçtiği konuma kaydetmek |
+| `storage` | En fazla altı sıkıştırılmış geçmiş önizlemesini yerel tutmak |
+| `<all_urls>` | Normal web sayfalarında seçim arayüzü, `PrtSc` ve tam sayfa akışını çalıştırmak |
 
-WX Shot ekran görüntülerini ağ üzerinden göndermez, kalıcı depolamaz ve analiz etmez. Shields.io görselleri yalnızca bu GitHub README dosyası görüntülendiğinde yüklenir; eklenti kodunda Shields.io veya başka bir harici servis bağlantısı bulunmaz.
+WX Shot'ta ağ isteği, hesap, telemetri, reklam veya takip kodu yoktur. Son çekimler özelliği yalnızca dışa aktarma yapıldığında yerel önizleme kaydeder ve **Geçmiş → Temizle** ile silinebilir. README'deki Shields.io görselleri yalnızca belge görüntülenirken yüklenir; eklenti kodunda Shields.io bağlantısı bulunmaz.
 
 ## Tarayıcı güvenlik sınırları
 
-- WebExtension API'leri işletim sistemi genelindeki `PrtSc` tuşunu garanti ederek devralamaz.
-- `PrtSc`, web sayfası odaktayken dinlenir; en güvenilir yöntem eklenti düğmesi veya `Alt + Shift + S` kısayoludur.
-- `brave://`, `chrome://`, `edge://`, `about:` ve eklenti mağazaları gibi korumalı sayfalarda içerik betikleri çalıştırılamaz.
-- Eklenti yalnızca tarayıcı sekmesinin görünür alanını yakalar; başka masaüstü uygulamalarını yakalayamaz.
+- `brave://`, `chrome://`, `edge://`, `about:`, eklenti mağazaları ve bazı yerleşik PDF sayfaları tarayıcı tarafından korunur.
+- Eklenti masaüstündeki diğer uygulamaları değil, yalnızca tarayıcı sekmesini yakalar.
+- İşletim sistemi genelindeki `PrtSc` tuşunu bir WebExtension'ın garanti ederek devralması mümkün değildir.
+- Çok uzun sayfalarda tuval sınırlarına uymak için çıktı en fazla 16384 px kenar ve yaklaşık 80 MP olacak şekilde orantılı küçültülebilir.
+- Tam sayfa yakalama en fazla 80 kareyle sınırlandırılmıştır.
+- Otomatik gizleme, sayfa DOM'undaki metinlerde en güvenilir şekilde çalışır; görsele gömülü yazılar için sonuç tarayıcının yerel metin algılama desteğine bağlıdır.
 
 ## Teknik yapı
 
 ```text
 wx-shot/
+├── _locales/                  # Türkçe ve İngilizce manifest metinleri
 ├── assets/                    # Eklenti ikonları
 ├── src/
-│   ├── background.js          # Yakalama, komut ve indirme akışı
-│   └── content.js             # Alan seçimi ve çizim düzenleyicisi
+│   ├── background.js          # Yakalama, birleştirme akışı, menü, geçmiş ve indirme
+│   └── content.js             # Alan seçimi, editör, efektler ve erişilebilir arayüz
 ├── tools/create-icons.ps1     # İkon üretim aracı
-├── build.ps1                  # Universal ZIP üretim betiği
-├── manifest.json              # Tüm tarayıcılar için ortak Manifest V3
-├── README.md                  # Proje belgesi
-├── KURULUM.md                 # Kısa kurulum ve sorun giderme rehberi
-└── LICENSE                    # MIT lisansı
+├── build.ps1                  # Tek Universal ZIP üretir
+├── manifest.json              # Ortak Manifest V3
+├── README.md
+├── KURULUM.md
+└── LICENSE
 ```
 
-Ortak manifest hem `background.service_worker` hem `background.scripts` tanımlar. Chromium 121+ service worker ortamını, Firefox 121+ arka plan script ortamını kullanır. Safari desteklediği belge tabanlı ortamı seçer.
+Ortak manifest, Chromium için `background.service_worker` ve Firefox için `background.scripts` alanlarını birlikte taşır. Kaynak kodda uzaktan çalıştırılan kod veya derleme bağımlılığı yoktur.
 
-## Geliştirme
+## Geliştirme ve paketleme
 
-Projede derleme bağımlılığı veya uzaktan çalıştırılan kod yoktur. Kaynak klasörü doğrudan tarayıcıya yüklenebilir.
-
-Dağıtım ZIP'ini yeniden oluşturmak için Windows PowerShell'de:
+Kaynak klasörü doğrudan tarayıcıya yüklenebilir. Dağıtım paketini üretmek için PowerShell'de:
 
 ```powershell
 ./build.ps1
 ```
+
+Çıktı: `dist/WX-Shot-Universal-v1.3.0.zip`
 
 İkonları yeniden üretmek için:
 
@@ -206,27 +213,45 @@ Dağıtım ZIP'ini yeniden oluşturmak için Windows PowerShell'de:
 ./tools/create-icons.ps1
 ```
 
+## Test durumu
+
+v1.3.0 gerçek Brave oturumunda aşağıdaki akışlarla doğrulanmıştır:
+
+- Eklentinin Manifest V3 olarak yüklenmesi
+- Alan yakalama, seçim ve editörün açılması
+- Kalem piksel üretimi ve silginin çizimi azaltması
+- 2580 px yüksekliğinde tam sayfa birleştirme
+- Akıllı gizleme ve manuel bulanıklaştırma efektleri
+- Yakınlaştırma kontrolü
+- PNG, JPEG ve WebP seçeneklerinin sunulması
+
+Firefox/Safari kalıcı mağaza dağıtımı için ilgili imzalama ve paketleme süreçleri ayrıca gereklidir.
+
 ## Sorun giderme
 
 ### “Manifest dosyası eksik veya okunamıyor”
 
-ZIP dosyası yerine ZIP'ten çıkarılan ve içinde doğrudan `manifest.json` bulunan klasörü seçin.
+ZIP'i değil, ZIP'ten çıkarılmış ve içinde doğrudan `manifest.json` bulunan klasörü seçin.
 
-### Eklenti düğmesine basınca bir şey olmuyor
+### Düğmeye basınca bir şey olmuyor
 
-Normal bir `http://` veya `https://` sayfası açın ve sayfayı bir kez yenileyin. Tarayıcının dahili ayar ve eklenti sayfaları korumalıdır.
+Normal bir `http://` veya `https://` sayfası açın. Eklentiyi yeni yüklediyseniz açık sekmeyi bir kez yenileyin.
 
 ### Kısayol çalışmıyor
 
-Chromium tarayıcılarda eklenti kısayolları sayfasını açıp WX Shot komutunu kontrol edin. Brave için adres `brave://extensions/shortcuts` şeklindedir.
+Brave için `brave://extensions/shortcuts`, Chrome için `chrome://extensions/shortcuts`, Edge için `edge://extensions/shortcuts` sayfasında çakışmayı kontrol edin.
 
-### `PrtSc` Windows ekran alıntısı aracını da açıyor
+### Tam sayfa yakalama kesiliyor
 
-Bu işletim sistemi davranışıdır. WX Shot düğmesini veya `Alt + Shift + S` kısayolunu kullanın.
+Yakalama bitene kadar sekmeyi önde tutun, sayfayı kaydırmayın ve sayfadaki sonsuz kaydırma/animasyonları mümkünse durdurun.
+
+### `PrtSc` Windows ekran alıntısını açıyor
+
+Windows ayarındaki Print Screen davranışı eklentiden önce çalışabilir. `Alt + Shift + S` veya eklenti düğmesini kullanın.
 
 ### Firefox kurulumu yeniden başlatınca kayboldu
 
-`about:debugging` üzerinden yüklenen eklentiler geçicidir. Kalıcı kullanım için Mozilla imzalı paket gerekir.
+`about:debugging` kurulumu geçicidir. Kalıcı kullanım, Mozilla tarafından imzalanmış paket gerektirir.
 
 ## Lisans
 
@@ -237,5 +262,5 @@ WX Shot, [MIT Lisansı](LICENSE) ile sunulur.
 ---
 
 <div align="center">
-  <sub>WX Shot — hızlı ekran görüntüsü, akıcı düzenleme, yerel gizlilik.</sub>
+  <sub>WX Shot — hızlı yakalama, akıcı düzenleme, yerel gizlilik.</sub>
 </div>

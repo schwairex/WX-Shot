@@ -1,0 +1,9 @@
+{
+  "extName": { "message": "WX Shot" },
+  "extDescription": { "message": "Alan veya tam sayfa ekran görüntüsü alın, düzenleyin, gizleyin ve dışa aktarın." },
+  "actionTitle": { "message": "WX Shot ile ekran görüntüsü al" },
+  "captureAreaCommand": { "message": "Görünür sekmeden alan seç" },
+  "captureFullCommand": { "message": "Tam sayfayı yakala" },
+  "contextArea": { "message": "WX Shot: Alan seç" },
+  "contextFull": { "message": "WX Shot: Tam sayfayı yakala" }
+}

@@ -1,6 +1,6 @@
-# WX Shot Universal 1.2.0 — Hızlı Kurulum
+# WX Shot Universal 1.3.0 — Hızlı Kurulum
 
-Tek `WX-Shot-Universal-v1.2.0.zip` paketi Brave, Chrome, Edge, Opera, Vivaldi ve Firefox'u destekler.
+Tek `WX-Shot-Universal-v1.3.0.zip` paketi Brave, Chrome, Edge, Opera, Vivaldi ve Firefox'u destekler.
 
 ## Başlamadan önce
 
@@ -21,6 +21,8 @@ ZIP dosyasını doğrudan seçmeyin. Önce **Tümünü ayıkla** ile klasöre ç
 3. **Paketlenmemiş öğe yükle** düğmesine basın.
 4. ZIP'ten çıkardığınız WX Shot klasörünü seçin.
 5. Normal bir web sayfasında eklenti düğmesini veya `Alt + Shift + S` kısayolunu kullanın.
+
+Tam sayfa yakalama için `Alt + Shift + F` kullanabilir veya sayfaya sağ tıklayıp **WX Shot: Tam sayfayı yakala** seçeneğini seçebilirsiniz.
 
 ## Firefox
 
@@ -45,6 +47,7 @@ Oluşturulan Xcode projesini Apple geliştirici kimliğiyle imzalayın.
 - **Manifest bulunamadı:** ZIP'i değil, çıkarılan ve `manifest.json` içeren klasörü seçin.
 - **Düğme çalışmıyor:** `brave://`, `chrome://`, `edge://` veya `about:` sayfasında olmayın; normal web sayfasını yenileyin.
 - **Kısayol çalışmıyor:** Tarayıcının eklenti kısayolları sayfasından çakışmayı kontrol edin.
+- **Tam sayfa yakalama yarıda kesiliyor:** İşlem bitene kadar sekmeyi önde tutun ve sayfayı kaydırmayın.
 - **PrtSc başka uygulamayı açıyor:** WX Shot düğmesini veya `Alt + Shift + S` kullanın.
 
 Tüm özellikler, izin açıklamaları, kısayollar ve teknik ayrıntılar için `README.md` dosyasına bakın.

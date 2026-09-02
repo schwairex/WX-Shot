@@ -1,12 +1,15 @@
 {
   "manifest_version": 3,
-  "name": "WX Shot",
-  "version": "1.2.0",
-  "description": "Sekmenin istediğiniz alanını seçin, işaretleyin, kopyalayın veya kaydedin.",
+  "name": "__MSG_extName__",
+  "version": "1.3.0",
+  "description": "__MSG_extDescription__",
+  "default_locale": "tr",
   "permissions": [
     "activeTab",
     "clipboardWrite",
-    "downloads"
+    "contextMenus",
+    "downloads",
+    "storage"
   ],
   "host_permissions": [
     "<all_urls>"
@@ -22,7 +25,7 @@
     "128": "assets/icon-128.png"
   },
   "action": {
-    "default_title": "WX Shot ile ekran görüntüsü al",
+    "default_title": "__MSG_actionTitle__",
     "default_icon": {
       "16": "assets/icon-16.png",
       "32": "assets/icon-32.png"
@@ -34,7 +37,14 @@
         "default": "Alt+Shift+S",
         "mac": "Alt+Shift+S"
       },
-      "description": "Görünür sekmeden alan seç"
+      "description": "__MSG_captureAreaCommand__"
+    },
+    "capture-full-page": {
+      "suggested_key": {
+        "default": "Alt+Shift+F",
+        "mac": "Alt+Shift+F"
+      },
+      "description": "__MSG_captureFullCommand__"
     }
   },
   "content_scripts": [

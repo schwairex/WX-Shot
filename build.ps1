@@ -17,6 +17,7 @@ try {
   New-Item -ItemType Directory -Path $universalRoot | Out-Null
   Copy-Item -LiteralPath (Join-Path $projectRoot "src") -Destination $universalRoot -Recurse
   Copy-Item -LiteralPath (Join-Path $projectRoot "assets") -Destination $universalRoot -Recurse
+  Copy-Item -LiteralPath (Join-Path $projectRoot "_locales") -Destination $universalRoot -Recurse
   Copy-Item -LiteralPath (Join-Path $projectRoot "tools") -Destination $universalRoot -Recurse
   Copy-Item -LiteralPath (Join-Path $projectRoot "manifest.json") -Destination $universalRoot
   Copy-Item -LiteralPath (Join-Path $projectRoot "README.md") -Destination $universalRoot
@@ -25,7 +26,7 @@ try {
   Copy-Item -LiteralPath (Join-Path $projectRoot "build.ps1") -Destination $universalRoot
 
   $archives = @{
-    "WX-Shot-Universal-v1.2.0.zip" = $universalRoot
+    "WX-Shot-Universal-v1.3.0.zip" = $universalRoot
   }
 
   foreach ($archive in $archives.GetEnumerator()) {
