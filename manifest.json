@@ -1,0 +1,47 @@
+{
+  "manifest_version": 3,
+  "name": "WX Shot",
+  "version": "1.0.0",
+  "description": "Sekmenin istediğiniz alanını seçin, işaretleyin, kopyalayın veya kaydedin.",
+  "permissions": [
+    "activeTab",
+    "clipboardWrite",
+    "downloads"
+  ],
+  "host_permissions": [
+    "<all_urls>"
+  ],
+  "background": {
+    "service_worker": "src/background.js"
+  },
+  "icons": {
+    "16": "assets/icon-16.png",
+    "32": "assets/icon-32.png",
+    "48": "assets/icon-48.png",
+    "128": "assets/icon-128.png"
+  },
+  "action": {
+    "default_title": "WX Shot ile ekran görüntüsü al",
+    "default_icon": {
+      "16": "assets/icon-16.png",
+      "32": "assets/icon-32.png"
+    }
+  },
+  "commands": {
+    "capture-visible-area": {
+      "suggested_key": {
+        "default": "Alt+Shift+S",
+        "mac": "Alt+Shift+S"
+      },
+      "description": "Görünür sekmeden alan seç"
+    }
+  },
+  "content_scripts": [
+    {
+      "matches": ["<all_urls>"],
+      "js": ["src/content.js"],
+      "run_at": "document_start",
+      "all_frames": false
+    }
+  ]
+}
