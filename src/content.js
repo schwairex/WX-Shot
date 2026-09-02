@@ -118,6 +118,7 @@
     const scaleY = image.naturalHeight / window.innerHeight;
     const width = Math.max(1, Math.round(cropRect.width * scaleX));
     const height = Math.max(1, Math.round(cropRect.height * scaleY));
+    const drawingSurface = fitDrawingSurface(width, height);
 
     const root = createRoot();
     root.innerHTML = `
@@ -132,8 +133,8 @@
           <div class="workspace">
             <div class="canvas-stage">
               <canvas class="base" width="${width}" height="${height}"></canvas>
-              <canvas class="draw" width="${width}" height="${height}"></canvas>
-              <canvas class="preview" width="${width}" height="${height}"></canvas>
+              <canvas class="draw" width="${drawingSurface.width}" height="${drawingSurface.height}"></canvas>
+              <canvas class="preview" width="${drawingSurface.width}" height="${drawingSurface.height}"></canvas>
             </div>
           </div>
           <footer>
@@ -171,8 +172,8 @@
     const draw = root.querySelector(".draw");
     const preview = root.querySelector(".preview");
     const baseCtx = base.getContext("2d");
-    const drawCtx = draw.getContext("2d");
-    const previewCtx = preview.getContext("2d");
+    const drawCtx = draw.getContext("2d", { alpha: true, desynchronized: true });
+    const previewCtx = preview.getContext("2d", { alpha: true, desynchronized: true });
     const stage = root.querySelector(".canvas-stage");
     const undoButton = root.querySelector(".undo");
     const redoButton = root.querySelector(".redo");
@@ -203,7 +204,7 @@
     };
 
     const renderCommitted = () => {
-      drawCtx.clearRect(0, 0, width, height);
+      drawCtx.clearRect(0, 0, draw.width, draw.height);
       actions.forEach((action) => drawAction(drawCtx, action));
       updateHistoryButtons();
     };
@@ -217,7 +218,7 @@
         return;
       }
 
-      previewCtx.clearRect(0, 0, width, height);
+      previewCtx.clearRect(0, 0, preview.width, preview.height);
       drawAction(previewCtx, activeAction);
     };
 
@@ -254,9 +255,11 @@
       if (tool === "text") {
         showTextInput(stage, preview, point, color, lineWidth, (text) => {
           if (text.trim()) {
-            actions.push({ tool: "text", color, width: lineWidth, start: point, text: text.trim() });
+            const textAction = { tool: "text", color, width: lineWidth, start: point, text: text.trim() };
+            actions.push(textAction);
             redoStack.length = 0;
-            renderCommitted();
+            drawAction(drawCtx, textAction);
+            updateHistoryButtons();
           }
         });
         return;
@@ -272,11 +275,11 @@
         renderedIndex: 0
       };
       if (tool === "eraser") {
-        previewCtx.clearRect(0, 0, width, height);
+        previewCtx.clearRect(0, 0, preview.width, preview.height);
         previewCtx.drawImage(draw, 0, 0);
         draw.style.visibility = "hidden";
       } else {
-        previewCtx.clearRect(0, 0, width, height);
+        previewCtx.clearRect(0, 0, preview.width, preview.height);
       }
       preview.setPointerCapture(event.pointerId);
       scheduleActivePaint();
@@ -306,12 +309,25 @@
       paintActiveAction();
       const completedAction = { ...activeAction };
       delete completedAction.renderedIndex;
+      if (freehandTools.has(completedAction.tool)) {
+        completedAction.points = simplifyStrokePoints(completedAction.points, Math.max(0.45, completedAction.width * 0.1));
+        previewCtx.clearRect(0, 0, preview.width, preview.height);
+        if (completedAction.tool === "eraser") previewCtx.drawImage(draw, 0, 0);
+        drawAction(previewCtx, completedAction);
+      }
+
+      if (completedAction.tool === "eraser") {
+        drawCtx.clearRect(0, 0, draw.width, draw.height);
+        drawCtx.drawImage(preview, 0, 0);
+      } else {
+        drawCtx.drawImage(preview, 0, 0);
+      }
       actions.push(completedAction);
       activeAction = null;
       redoStack.length = 0;
       draw.style.visibility = "visible";
-      previewCtx.clearRect(0, 0, width, height);
-      renderCommitted();
+      previewCtx.clearRect(0, 0, preview.width, preview.height);
+      updateHistoryButtons();
       if (event?.pointerId != null && preview.hasPointerCapture(event.pointerId)) {
         preview.releasePointerCapture(event.pointerId);
       }
@@ -508,6 +524,20 @@
     return Math.hypot(b.x - a.x, b.y - a.y);
   }
 
+  function simplifyStrokePoints(points, tolerance) {
+    if (points.length <= 2) return points;
+    const simplified = [points[0]];
+    let previous = points[0];
+    for (let index = 1; index < points.length - 1; index += 1) {
+      if (distance(previous, points[index]) >= tolerance) {
+        simplified.push(points[index]);
+        previous = points[index];
+      }
+    }
+    simplified.push(points.at(-1));
+    return simplified;
+  }
+
   function constrainedEnd(start, end, tool) {
     const deltaX = end.x - start.x;
     const deltaY = end.y - start.y;
@@ -574,7 +604,7 @@
     output.height = base.height;
     const ctx = output.getContext("2d");
     ctx.drawImage(base, 0, 0);
-    ctx.drawImage(draw, 0, 0);
+    ctx.drawImage(draw, 0, 0, output.width, output.height);
     return new Promise((resolve, reject) => output.toBlob((blob) => blob ? resolve(blob) : reject(new Error("PNG oluşturulamadı")), "image/png"));
   }
 
@@ -610,6 +640,18 @@
     return {
       x: (event.clientX - rect.left) * (canvas.width / rect.width),
       y: (event.clientY - rect.top) * (canvas.height / rect.height)
+    };
+  }
+
+  function fitDrawingSurface(width, height) {
+    const maxEdge = 3200;
+    const maxPixels = 8_000_000;
+    const edgeScale = Math.min(1, maxEdge / Math.max(width, height));
+    const pixelScale = Math.min(1, Math.sqrt(maxPixels / (width * height)));
+    const scale = Math.min(edgeScale, pixelScale);
+    return {
+      width: Math.max(1, Math.round(width * scale)),
+      height: Math.max(1, Math.round(height * scale))
     };
   }
 
@@ -665,8 +707,8 @@
     .icon-button:hover,.tool:hover:not(:disabled) { color:#fff; background:#282e3b; }.tool.active { color:#fff; background:#5b5ce2; box-shadow:0 7px 18px rgba(91,92,226,.28); }.tool:active:not(:disabled){transform:scale(.95)}.tool:disabled{opacity:.28;cursor:default}.close{font-size:26px;font-weight:300;}
     .workspace { min-height:0; display:grid; place-items:center; overflow:auto; padding:28px; background-color:#0b0e14; background-image:linear-gradient(45deg,#121620 25%,transparent 25%),linear-gradient(-45deg,#121620 25%,transparent 25%),linear-gradient(45deg,transparent 75%,#121620 75%),linear-gradient(-45deg,transparent 75%,#121620 75%); background-size:20px 20px;background-position:0 0,0 10px,10px -10px,-10px 0; }
     .canvas-stage { position:relative; max-width:100%; max-height:100%; line-height:0; box-shadow:0 18px 52px rgba(0,0,0,.48); }
-    canvas { display:block; max-width:100%; max-height:calc(100vh - 220px); width:auto; height:auto; }
-    .draw,.preview { position:absolute; inset:0; }.draw{pointer-events:none}.preview{touch-action:none}.preview[data-cursor="text"]{cursor:text}.preview[data-cursor="eraser"]{cursor:cell}.preview:not([data-cursor="text"]):not([data-cursor="eraser"]){cursor:crosshair}
+    .base { display:block; max-width:100%; max-height:calc(100vh - 220px); width:auto; height:auto; }
+    .draw,.preview { position:absolute; inset:0; width:100%; height:100%; contain:strict; }.draw{pointer-events:none}.preview{touch-action:none}.preview[data-cursor="text"]{cursor:text}.preview[data-cursor="eraser"]{cursor:cell}.preview:not([data-cursor="text"]):not([data-cursor="eraser"]){cursor:crosshair}
     .text-entry { position:absolute; z-index:3; min-width:150px; width:220px; padding:7px 9px; border:1px solid #7c73ff; border-radius:8px; outline:none; color:#fff; background:rgba(15,23,42,.92); line-height:1.2; box-shadow:0 9px 30px rgba(0,0,0,.3); transform:translateY(-3px); }
     footer { display:flex; align-items:center; gap:18px; padding:0 16px; border-top:1px solid #252a35; background:#151922; }
     .tools,.actions,.colors { display:flex; align-items:center; gap:5px; }.actions{margin-left:auto;gap:9px}.divider{width:1px;height:27px;margin:0 5px;background:#303644}
